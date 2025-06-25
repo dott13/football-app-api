@@ -13,7 +13,7 @@ async fn main() -> std::io::Result<()>{
     let client = build_client()
         .expect("Failed to build client");
     println!("Client has been built");
-    let html = fetch_html(&client, "https://www.transfermarkt.com/eredivisie/startseite/wettbewerb/NL1").await;
+    let _html = fetch_html(&client, "https://www.transfermarkt.com/eredivisie/startseite/wettbewerb/NL1").await;
     println!("fetched html");
 
     let teams = get_league_teams(&client, "https://www.transfermarkt.com/eredivisie/startseite/wettbewerb/NL1").await.expect("Failed to get the teams");
@@ -29,7 +29,7 @@ async fn main() -> std::io::Result<()>{
         println!("  Δ Value:      {:?}", team.delta_value);
         println!("  Market value: {:?}\n", team.market_value);
     }
-    
+
     HttpServer::new(|| App::new())
         .bind(("127.0.0.1", 8080))?
         .run()

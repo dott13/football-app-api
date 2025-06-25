@@ -1,7 +1,7 @@
 use reqwest::Client;
 use scraper::{Html, Selector};
 
-use crate::{models::team::Team, utils::fetch_html::fetch_html};
+use crate::{models::team::Team, utils::{fetch_html::fetch_html, parse_money::parse_money}};
 
 pub async fn get_league_teams(client: &Client, league_url: &str) -> Result<Vec<Team>, reqwest::Error> {
     let html = fetch_html(client, league_url).await?;
@@ -44,7 +44,9 @@ fn parse_teams(html: &str) -> Vec<Team> {
 
     println!("Parsed headers ({}): {:?}", headers.len(), headers);
 
-    let club_id = headers.iter().position(|h| h.contains("Club")).unwrap();
+    let club_ids: Vec<_> = headers.iter().enumerate().filter(|(_,h)| h.contains("Club")).map(|(i, _)| i).collect();
+    let crest_id = club_ids[0];
+    let name_id = club_ids[1];
     let squad_size_id = headers.iter().position(|h| h.contains("Squad")).unwrap();
     let delta_age_id = headers.iter().position(|h| h.contains("ø age")).unwrap();
     let foreigners_id = headers.iter().position(|h| h.contains("Foreigners")).unwrap();
@@ -58,15 +60,15 @@ fn parse_teams(html: &str) -> Vec<Team> {
     for row in league_table.select(&row_sel) {
         println!("ROW:\n{}\n", row.html());
         let cells: Vec<_> = row.select(&td_sel).collect();
-        let club_cell = &cells[club_id];
-        let name = club_cell
+        let name_cell = &cells[name_id];
+        let name = name_cell
             .select(&Selector::parse("a").unwrap())
             .next().unwrap()
             .text().collect::<String>().trim().to_string();
-        let logo = club_cell
+        let logo_cell = &cells[crest_id];
+        let logo = logo_cell
             .select(&Selector::parse("img").unwrap())
-            .next().unwrap()
-            .text().collect::<String>().trim().to_string();
+            .next().and_then(|img| img.value().attr("src")).unwrap_or_default();
 
         let squad_size = cells[squad_size_id]
             .text().collect::<String>().trim().parse::<u8>().ok();
@@ -77,14 +79,14 @@ fn parse_teams(html: &str) -> Vec<Team> {
         let foreigners = cells[foreigners_id]
             .text().collect::<String>().trim().parse::<u8>().ok();
 
-        let delta_value = cells[delta_value_id]
-            .text().collect::<String>().trim().parse::<f32>().ok();
-        let market_value = cells[market_value_id]
-            .text().collect::<String>().trim().parse::<f32>().ok();
+        let delta_value = parse_money(&(cells[delta_value_id]
+            .text().collect::<String>()));
+        let market_value = parse_money(&(cells[market_value_id]
+            .text().collect::<String>()));
 
         teams.push(Team {
             name,
-            logo,
+            logo: logo.to_string(),
             squad_size,
             delta_age,
             foreigners,
