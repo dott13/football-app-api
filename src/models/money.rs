@@ -1,4 +1,6 @@
-#[derive(Debug)]
+use serde::Serialize;
+
+#[derive(Debug, Serialize)]
 pub enum Unit {
     K,
     M,
@@ -6,7 +8,7 @@ pub enum Unit {
     None
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct MonetaryValue {
     pub amount: f32,
     pub unit: Unit

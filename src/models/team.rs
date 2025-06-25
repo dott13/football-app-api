@@ -1,5 +1,8 @@
+use serde::Serialize;
+
 use crate::models::money::MonetaryValue;
 
+#[derive(Serialize)]
 pub struct Team {
     pub name: String,
     pub logo: String,
