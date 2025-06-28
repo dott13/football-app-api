@@ -1,6 +1,6 @@
-use actix_web::{App, HttpServer};
+use actix_web::{web::Data, App, HttpServer};
 
-use crate::{scrapers::league_scraper::get_league_teams, utils::{client::build_client}};
+use crate::{scrapers::league::league_teams_scraper::get_league_teams, utils::{client::build_client, db::connect_db}};
 
 mod handlers;
 mod scrapers;
@@ -9,7 +9,10 @@ mod utils;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()>{
-    
+    dotenvy::dotenv().ok();
+    let db = connect_db().
+        await.expect("Failed to connect to db");
+    let db_data = Data::new(db);
     let client = build_client()
         .expect("Failed to build client");
     println!("Client has been built");
@@ -19,7 +22,7 @@ async fn main() -> std::io::Result<()>{
     let json = serde_json::to_string_pretty(&teams)?;
     println!("{}", json);
 
-    HttpServer::new(|| App::new())
+    HttpServer::new( move || App::new().app_data(db_data.clone()))
         .bind(("127.0.0.1", 8080))?
         .run()
         .await
