@@ -41,16 +41,22 @@ where
             .and_then(|s| s.parse::<usize>().ok())
             .unwrap_or(1);
         //push the labels to the headers vector
+        println!("headers: {}", label);
         for _ in 0..span {
             headers.push(label.clone());
         }
     }
 
-    let cells_sel = Selector::parse("td").unwrap();
+    let cells_sel = Selector::parse(":scope > td").unwrap();
     let mut results: Vec<T> = Vec::new();
     for row in table.select(&row_sel) {
 
         let cells: Vec<ElementRef> = row.select(&cells_sel).collect();
+        
+        if cells.len() != headers.len() {
+            continue;
+        }
+        
         let mut row_map = HashMap::new();
         for (i, hdr) in headers.iter().enumerate() {
             row_map.insert(hdr.clone(), cells[i].clone());
@@ -71,7 +77,7 @@ where F: Fn(&HashMap<String, ElementRef>) -> T {
         html,
         "table.items",
         "thead tr th",
-        "tbody tr",
+        "tbody > tr",
         map_row
     )
 }
