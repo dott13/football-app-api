@@ -1,17 +1,11 @@
 use reqwest::Client;
 use scraper::Selector;
 
-use crate::{models::league::League, scrapers::helpers::table_parser::parse_table_default, utils::fetch_html::fetch_html};
+use crate::{models::league::League, scrapers::helpers::table_parser::parse_table_default};
 
 pub async fn get_league(client: &Client, europe_url: &str) -> Result<Vec<League>, reqwest::Error> {
-    let html = fetch_html(client, europe_url).await?;
-    let leagues = parse_league(&html);
-    Ok(leagues)
-}
-
-fn parse_league(html: &str) -> Vec<League> {
-    let leagues: Vec<League> = parse_table_default(&html, |row_map| {
-        let cell = &row_map["Competition"];
+    let leagues = parse_table_default(client, europe_url, |row_map| {
+         let cell = &row_map["Competition"];
 
         let link = cell
             .select(&Selector::parse("a").unwrap())
@@ -29,7 +23,6 @@ fn parse_league(html: &str) -> Vec<League> {
     
         
         League {name, slug, tm_id}
-    });
-
-    leagues
+    }).await?;
+    Ok(leagues)
 }
