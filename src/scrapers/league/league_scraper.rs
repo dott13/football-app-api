@@ -9,11 +9,17 @@ pub async fn get_league(client: &Client, europe_url: &str) -> Result<Vec<League>
 
         let link = cell
             .select(&Selector::parse("a").unwrap())
+            .filter(|a| {
+                !a 
+                    .text()
+                    .collect::<String>()
+                    .trim()
+                    .is_empty()
+            })
             .next()
             .expect("missing <a> in league row");
         
         let name = link.text().collect::<String>().trim().to_string();
-
         // 4. Extract href and split into segments
         let href = link.value().attr("href").unwrap();
         let href = href.trim_start_matches('/'); 

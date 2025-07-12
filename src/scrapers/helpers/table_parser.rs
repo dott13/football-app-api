@@ -51,7 +51,6 @@ where
                 .and_then(|s| s.parse::<usize>().ok())
                 .unwrap_or(1);
             //push the labels to the headers vector
-            println!("headers: {}", label);
             for _ in 0..span {
                 headers.push(label.clone());
             }
@@ -96,7 +95,7 @@ where F: Fn(&HashMap<String, ElementRef>) -> T {
         html,
         "table.items",
         "thead tr th",
-        "tbody > tr",
+        ":scope > tbody > tr",
         map_row
     ).await
 }
