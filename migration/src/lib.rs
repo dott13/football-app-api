@@ -1,6 +1,6 @@
 pub use sea_orm_migration::prelude::*;
 
-mod m20250626_181911_create_leagues;
+mod m20250626_181911_create_competition;
 
 pub struct Migrator;
 
@@ -8,7 +8,7 @@ pub struct Migrator;
 impl MigratorTrait for Migrator {
     fn migrations() -> Vec<Box<dyn MigrationTrait>> {
         vec![
-            Box::new(m20250626_181911_create_leagues::Migration),
+            Box::new(m20250626_181911_create_competition::Migration),
         ]
     }
 }

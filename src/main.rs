@@ -1,6 +1,6 @@
 use actix_web::{web::Data, App, HttpServer};
 
-use crate::{scrapers::league::{league_scraper::get_league}, utils::{client::build_client, db::connect_db}};
+use crate::{scrapers::league::{competition_scraper::get_competition}, utils::{client::build_client, db::connect_db}};
 
 mod handlers;
 mod scrapers;
@@ -16,7 +16,7 @@ async fn main() -> std::io::Result<()>{
     let client = build_client()
         .expect("Failed to build client");
     println!("Client has been built");
-    let leagues = get_league(&client, "https://www.transfermarkt.com/wettbewerbe/europa").await.expect("Failed to get the leagues");
+    let leagues = get_competition(&client, "https://www.transfermarkt.com/wettbewerbe/europa").await.expect("Failed to get the leagues");
     println!("Parsed {} leagues\n", leagues.len());
 
     let json = serde_json::to_string_pretty(&leagues)?;

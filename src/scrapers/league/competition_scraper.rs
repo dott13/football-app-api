@@ -3,8 +3,8 @@ use scraper::Selector;
 
 use crate::{models::league::League, scrapers::helpers::table_parser::parse_table_default};
 
-pub async fn get_league(client: &Client, europe_url: &str) -> Result<Vec<League>, reqwest::Error> {
-    let leagues = parse_table_default(client, europe_url, |row_map| {
+pub async fn get_competition(client: &Client, europe_url: &str) -> Result<Vec<League>, reqwest::Error> {
+    let competitions = parse_table_default(client, europe_url, |row_map| {
          let cell = &row_map["Competition"];
 
         let link = cell
@@ -30,5 +30,5 @@ pub async fn get_league(client: &Client, europe_url: &str) -> Result<Vec<League>
         
         League {name, slug, tm_id}
     }).await?;
-    Ok(leagues)
+    Ok(competitions)
 }
