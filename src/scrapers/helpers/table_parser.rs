@@ -15,11 +15,11 @@ pub async fn parse_table<T, F>(
     map_row: F
 ) -> Result<Vec<T>, reqwest::Error>
 where 
-    F: Fn(&HashMap<String, scraper::ElementRef>) -> T 
+    F: FnMut(&HashMap<String, scraper::ElementRef>) -> Option<T> 
 {
     let mut url = start_url.to_string();
     let mut results = Vec::new();
-
+    let mut map_row = map_row;
     loop {
         let html = fetch_html(client, &url).await?;
 
@@ -69,8 +69,9 @@ where
             for (i, hdr) in headers.iter().enumerate() {
                 row_map.insert(hdr.clone(), cells[i].clone());
             }
-
-            results.push(map_row(&row_map));
+            if let Some(item) = map_row(&row_map) {
+                results.push(item); 
+            }
         }
         
         if let Some(next) = find_next_page(&html) {
@@ -89,7 +90,7 @@ pub async fn parse_table_default<T, F>(
     html: &str,
     map_row: F
 ) -> Result<Vec<T>, reqwest::Error>
-where F: Fn(&HashMap<String, ElementRef>) -> T {
+where F: FnMut(&HashMap<String, ElementRef>) -> Option<T> {
     parse_table(
         client,
         html,

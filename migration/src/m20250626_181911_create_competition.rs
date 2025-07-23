@@ -120,17 +120,17 @@ enum Seasons {
 #[derive(DeriveIden)]
 enum CompetitionTypes {
     Enum,
-    #[sea_orm(iden = "First Tear")]
+    #[sea_orm(iden = "First Tier")]
     FirstTier,
-    #[sea_orm(iden = "Second Tear")]
+    #[sea_orm(iden = "Second Tier")]
     SecondTier,
-    #[sea_orm(iden = "Third Tear")]
+    #[sea_orm(iden = "Third Tier")]
     ThirdTier,
-    #[sea_orm(iden = "Fourth Tear")]
+    #[sea_orm(iden = "Fourth Tier")]
     FourthTier,
-    #[sea_orm(iden = "Fifth Tear")]
+    #[sea_orm(iden = "Fifth Tier")]
     FifthTier,
-    #[sea_orm(iden = "Sixth Tear")]
+    #[sea_orm(iden = "Sixth Tier")]
     SixthTier,
     #[sea_orm(iden = "Youth League")]
     YouthLeague,
