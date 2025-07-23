@@ -1,25 +1,16 @@
-use actix_web::{App, HttpServer};
+use actix_web::{web::Data, App, HttpServer};
+use football_app_api::{self, utils::db::connect_db};
 
-use crate::{scrapers::league_scraper::get_league_teams, utils::{client::build_client}};
 
-mod handlers;
-mod scrapers;
-mod models;
-mod utils;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()>{
-    
-    let client = build_client()
-        .expect("Failed to build client");
-    println!("Client has been built");
-    let teams = get_league_teams(&client, "https://www.transfermarkt.com/eredivisie/startseite/wettbewerb/NL1").await.expect("Failed to get the teams");
-    println!("Parsed {} teams\n", teams.len());
+    dotenvy::dotenv().ok();
+    let db = connect_db().
+        await.expect("Failed to connect to db");
 
-    let json = serde_json::to_string_pretty(&teams)?;
-    println!("{}", json);
-
-    HttpServer::new(|| App::new())
+    let db_data = Data::new(db);
+    HttpServer::new( move || App::new().app_data(db_data.clone()))
         .bind(("127.0.0.1", 8080))?
         .run()
         .await
