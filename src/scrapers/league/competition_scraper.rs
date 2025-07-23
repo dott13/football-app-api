@@ -32,7 +32,7 @@ pub async fn get_competition(client: &Client, europe_url: &str) -> Result<Vec<Co
         let href = link.value().attr("href").unwrap();
         let href = href.trim_start_matches('/'); 
         let segments: Vec<&str> = href.split('/').collect();
-        let slug  = segments[0].to_string();
+        let slug  = Some(segments[0].to_string());
         let tm_id = segments.last().unwrap().to_string();
 
         let country = row_map["Country"]

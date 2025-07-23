@@ -42,7 +42,7 @@ pub enum CompetitionTypes {
 pub struct Competition {
     pub name: String,
     pub tm_id: String,
-    pub slug: String,
+    pub slug: Option<String>,
     pub country: String,
     pub competition_type: CompetitionTypes,
 }
@@ -71,5 +71,32 @@ impl std::str::FromStr for CompetitionTypes {
             "Cups" => Ok(CompetitionTypes::Cups),
             _ => Err(())
         }
+    }
+}
+
+use std::fmt;
+
+impl fmt::Display for CompetitionTypes {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let s = match self {
+            CompetitionTypes::FirstTier             => "First Tier",
+            CompetitionTypes::SecondTier            => "Second Tier",
+            CompetitionTypes::ThirdTier             => "Third Tier",
+            CompetitionTypes::FourthTier            => "Fourth Tier",
+            CompetitionTypes::FifthTier             => "Fifth Tier",
+            CompetitionTypes::SixthTier             => "Sixth Tier",
+            CompetitionTypes::YouthLeague           => "Youth League",
+            CompetitionTypes::DomesticCup           => "Domestic Cup",
+            CompetitionTypes::DomesticSuperCup      => "Domestic Super Cup",
+            CompetitionTypes::PlayOffs              => "Play-Offs",
+            CompetitionTypes::LeagueCup             => "League Cup",
+            CompetitionTypes::DomesticYouthCup      => "Domestic Youth Cup",
+            CompetitionTypes::ReserveLeague         => "Reserve League",
+            CompetitionTypes::FurtherCup            => "Further Cup",
+            CompetitionTypes::NationalYouthSuperCup => "National Youth Super Cup",
+            CompetitionTypes::InternationalCups     => "International Cups",
+            CompetitionTypes::Cups                  => "Cups",
+        };
+        write!(f, "{}", s)
     }
 }
