@@ -16,3 +16,11 @@ sea-orm = { version = "1.1.0", features = ["sqlx-postgres", "runtime-tokio-nativ
 tokio = { version = "1.45.1", features = ["rt-multi-thread", "macros"] }
 dotenvy = "0.15.7"
 sea-orm-migration = { version = "1.1.12", features = ["sqlx-postgres"] }
+
+[[bin]]
+name = "football-app-api"
+path = "src/main.rs"
+
+[[bin]]
+name = "seed"
+path = "src/bin/seed.rs"
